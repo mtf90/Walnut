@@ -161,6 +161,16 @@
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>0.8.14</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.moditect</groupId>
+                    <artifactId>moditect-maven-plugin</artifactId>
+                    <version>1.3.0.Final</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jlink-plugin</artifactId>
+                    <version>3.3.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -193,7 +203,7 @@
                 </plugins>
             </build>
         </profile>
-	<profile>
+        <profile>
             <!-- build fat jar, including all its dependencies -->
             <id>fat-jar</id>
             <build>
@@ -201,9 +211,9 @@
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <configuration>
-				<descriptorRefs>
-					<descriptorRef>jar-with-dependencies</descriptorRef>
-				</descriptorRefs>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
                             <appendAssemblyId>false</appendAssemblyId>
                             <finalName>Walnut-all</finalName>
                             <archive>
@@ -219,6 +229,111 @@
                                     <goal>single</goal>
                                 </goals>
                                 <phase>package</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>dist</id>
+            <build>
+                <plugins>
+                    <!-- "patch" non-modular dependencies -->
+                    <plugin>
+                        <groupId>org.moditect</groupId>
+                        <artifactId>moditect-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>add-module-infos</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>add-module-info</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                                    <overwriteExistingFiles>true</overwriteExistingFiles>
+                                    <modules>
+                                        <!-- Repeat this block for each non-modular dependency -->
+                                        <module>
+                                            <artifact>
+                                                <groupId>it.unimi.dsi</groupId>
+                                                <artifactId>fastutil</artifactId>
+                                            </artifact>
+                                            <moduleInfo>
+                                                <name>it.unimi.dsi.fastutil</name>
+                                            </moduleInfo>
+                                        </module>
+                                        <module>
+                                            <artifact>
+                                                <groupId>dk.brics</groupId>
+                                                <artifactId>automaton</artifactId>
+                                            </artifact>
+                                            <moduleInfo>
+                                                <name>automaton</name>
+                                            </moduleInfo>
+                                        </module>
+                                    </modules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- build image via jlink -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jlink-plugin</artifactId>
+                        <configuration>
+                            <classifier>dist-${os.name}</classifier>
+                            <noHeaderFiles>true</noHeaderFiles>
+                            <noManPages>true</noManPages>
+                            <stripDebug>true</stripDebug>
+                            <modulePaths>
+                                <modulePath>${project.build.directory}/modules</modulePath>
+                            </modulePaths>
+                            <launcher>Walnut=io.github.walnut_theorem_prover.walnut/Main.Prover</launcher>
+                            <additionalResources>
+                                <resource>
+                                    <directory>${project.basedir}</directory>
+                                    <includes>
+                                        <include>LICENSE</include>
+                                        <include>README.md</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>Automata Library</directory>
+                                    <targetPath>Automata Library</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>Command Files</directory>
+                                    <targetPath>Command Files</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>Custom Bases</directory>
+                                    <targetPath>Custom Bases</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>Macro Library</directory>
+                                    <targetPath>Macro Library</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>Morphism Library</directory>
+                                    <targetPath>Morphism Library</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>Transducer Library</directory>
+                                    <targetPath>Transducer Library</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>Word Automata Library</directory>
+                                    <targetPath>Word Automata Library</targetPath>
+                                </resource>
+                            </additionalResources>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>jlink</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
