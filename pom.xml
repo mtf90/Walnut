@@ -225,20 +225,20 @@
                                         <!-- Repeat this block for each non-modular dependency -->
                                         <module>
                                             <artifact>
-                                                <groupId>it.unimi.dsi</groupId>
-                                                <artifactId>fastutil</artifactId>
-                                            </artifact>
-                                            <moduleInfo>
-                                                <name>it.unimi.dsi.fastutil</name>
-                                            </moduleInfo>
-                                        </module>
-                                        <module>
-                                            <artifact>
                                                 <groupId>dk.brics</groupId>
                                                 <artifactId>automaton</artifactId>
                                             </artifact>
                                             <moduleInfo>
                                                 <name>automaton</name>
+                                            </moduleInfo>
+                                        </module>
+                                        <module>
+                                            <artifact>
+                                                <groupId>it.unimi.dsi</groupId>
+                                                <artifactId>fastutil</artifactId>
+                                            </artifact>
+                                            <moduleInfo>
+                                                <name>it.unimi.dsi.fastutil</name>
                                             </moduleInfo>
                                         </module>
                                     </modules>
@@ -251,7 +251,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jlink-plugin</artifactId>
                         <configuration>
-                            <classifier>dist-${os.name}</classifier>
+                            <attach>false</attach>
                             <noHeaderFiles>true</noHeaderFiles>
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
