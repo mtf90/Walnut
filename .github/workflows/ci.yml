@@ -12,4 +12,4 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Build
-        run: mvn --batch-mode install
+        run: mvn --batch-mode install -Pdist
