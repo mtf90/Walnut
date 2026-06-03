@@ -150,6 +150,10 @@
                     <artifactId>maven-project-info-reports-plugin</artifactId>
                     <version>3.6.1</version>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
 
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -170,6 +174,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jlink-plugin</artifactId>
                     <version>3.3.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.panteleyev</groupId>
+                    <artifactId>jpackage-maven-plugin</artifactId>
+                    <version>1.7.2</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -213,14 +222,12 @@
                         <artifactId>moditect-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>add-module-infos</id>
-                                <phase>generate-resources</phase>
+                                <phase>package</phase>
                                 <goals>
                                     <goal>add-module-info</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${project.build.directory}/modules</outputDirectory>
-                                    <overwriteExistingFiles>true</overwriteExistingFiles>
+                                    <outputDirectory>${project.build.directory}/moditect-modules</outputDirectory>
                                     <modules>
                                         <!-- Repeat this block for each non-modular dependency -->
                                         <module>
@@ -246,62 +253,121 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- build image via jlink -->
+                    <!-- build runtime image via jlink -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jlink-plugin</artifactId>
-                        <configuration>
-                            <attach>false</attach>
-                            <noHeaderFiles>true</noHeaderFiles>
-                            <noManPages>true</noManPages>
-                            <stripDebug>true</stripDebug>
-                            <modulePaths>
-                                <modulePath>${project.build.directory}/modules</modulePath>
-                            </modulePaths>
-                            <launcher>Walnut=io.github.walnut_theorem_prover.walnut/Main.Prover</launcher>
-                            <additionalResources>
-                                <resource>
-                                    <directory>${project.basedir}</directory>
-                                    <includes>
-                                        <include>LICENSE</include>
-                                        <include>README.md</include>
-                                    </includes>
-                                </resource>
-                                <resource>
-                                    <directory>Automata Library</directory>
-                                    <targetPath>Automata Library</targetPath>
-                                </resource>
-                                <resource>
-                                    <directory>Command Files</directory>
-                                    <targetPath>Command Files</targetPath>
-                                </resource>
-                                <resource>
-                                    <directory>Custom Bases</directory>
-                                    <targetPath>Custom Bases</targetPath>
-                                </resource>
-                                <resource>
-                                    <directory>Macro Library</directory>
-                                    <targetPath>Macro Library</targetPath>
-                                </resource>
-                                <resource>
-                                    <directory>Morphism Library</directory>
-                                    <targetPath>Morphism Library</targetPath>
-                                </resource>
-                                <resource>
-                                    <directory>Transducer Library</directory>
-                                    <targetPath>Transducer Library</targetPath>
-                                </resource>
-                                <resource>
-                                    <directory>Word Automata Library</directory>
-                                    <targetPath>Word Automata Library</targetPath>
-                                </resource>
-                            </additionalResources>
-                        </configuration>
                         <executions>
                             <execution>
+                                <phase>package</phase>
                                 <goals>
                                     <goal>jlink</goal>
                                 </goals>
+                                <configuration>
+                                    <attach>false</attach>
+                                    <noHeaderFiles>true</noHeaderFiles>
+                                    <noManPages>true</noManPages>
+                                    <stripDebug>true</stripDebug>
+                                    <modulePaths>
+                                        <modulePath>${project.build.directory}/moditect-modules</modulePath>
+                                    </modulePaths>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- aggregate additional resources in temporary directory -->
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/jpackage-resources</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}</directory>
+                                            <includes>
+                                                <include>LICENSE</include>
+                                                <include>README.md</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>Automata Library</directory>
+                                            <targetPath>Automata Library</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>Command Files</directory>
+                                            <targetPath>Command Files</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>Custom Bases</directory>
+                                            <targetPath>Custom Bases</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>Macro Library</directory>
+                                            <targetPath>Macro Library</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>Morphism Library</directory>
+                                            <targetPath>Morphism Library</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>Transducer Library</directory>
+                                            <targetPath>Transducer Library</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>Word Automata Library</directory>
+                                            <targetPath>Word Automata Library</targetPath>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- build distributable package -->
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <configuration>
+                                    <name>Walnut</name>
+                                    <appVersion>${project.version}</appVersion>
+                                    <type>APP_IMAGE</type>
+                                    <input>${project.build.directory}/jpackage-resources</input>
+                                    <module>io.github.walnut_theorem_prover.walnut/Main.Prover</module>
+                                    <runtimeImage>${project.build.directory}/maven-jlink/default</runtimeImage>
+                                    <destination>${project.build.directory}/maven-jpackage</destination>
+                                    <arguments>
+                                        <!-- make sure we use the package's local dir as working directory -->
+                                        <argument>--home-dir=$APPDIR</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- zip everything up -->
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <zip destfile="${project.build.directory}/walnut-${project.version}-${os.name}-${os.arch}.zip"
+                                             basedir="${project.build.directory}/maven-jpackage"/>
+                                    </target>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
