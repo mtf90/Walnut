@@ -349,22 +349,36 @@
                                         <!-- make sure we use the package's local dir as working directory -->
                                         <argument>--home-dir=$APPDIR</argument>
                                     </arguments>
+                                    <icon>${project.basedir}/src/main/resources/Walnut.png</icon>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- zip everything up -->
+                    <!-- cleanup / zip everything up -->
                     <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>delete-jlink-artifact</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <zip destfile="${project.build.directory}/walnut-${project.version}-${os.name}-${os.arch}.zip"
+                                        <delete file="${project.build.directory}/walnut-${project.version}.zip"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>zip-jpackage-artifact</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <zip destfile="${project.build.directory}/Walnut-${project.version}-${os.name}-${os.arch}.zip"
                                              basedir="${project.build.directory}/maven-jpackage"/>
                                     </target>
                                 </configuration>
