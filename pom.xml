@@ -109,14 +109,6 @@
     </repositories>
 
     <build>
-        <extensions>
-            <!-- used for normalized os.name / os.arch values when building installers  -->
-            <extension>
-                <groupId>kr.motd.maven</groupId>
-                <artifactId>os-maven-plugin</artifactId>
-                <version>1.7.0</version>
-            </extension>
-        </extensions>
         <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
             <plugins>
                 <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
@@ -159,6 +151,10 @@
                     <version>3.6.1</version>
                 </plugin>
                 <plugin>
+                    <artifactId>maven-jlink-plugin</artifactId>
+                    <version>3.3.0</version>
+                </plugin>
+                <plugin>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>3.1.0</version>
                 </plugin>
@@ -179,17 +175,20 @@
                     <version>1.3.0.Final</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jlink-plugin</artifactId>
-                    <version>3.3.0</version>
-                </plugin>
-                <plugin>
                     <groupId>org.panteleyev</groupId>
                     <artifactId>jpackage-maven-plugin</artifactId>
                     <version>1.7.2</version>
                 </plugin>
             </plugins>
         </pluginManagement>
+        <extensions>
+            <!-- used for normalized os.name / os.arch values when building distributions  -->
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.7.0</version>
+            </extension>
+        </extensions>
     </build>
 
     <profiles>
@@ -379,7 +378,6 @@
                                 </goals>
                                 <configuration>
                                     <name>Walnut</name>
-                                    <appVersion>${project.version}</appVersion>
                                     <type>APP_IMAGE</type>
                                     <input>${project.build.directory}/jpackage-resources</input>
                                     <module>io.github.walnut_theorem_prover.walnut/Main.Prover</module>
@@ -397,6 +395,19 @@
                     <!-- cleanup / zip everything up -->
                     <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>ant-contrib</groupId>
+                                <artifactId>ant-contrib</artifactId>
+                                <version>1.0b3</version>
+                                <exclusions>
+                                    <exclusion>
+                                        <groupId>ant</groupId>
+                                        <artifactId>ant</artifactId>
+                                    </exclusion>
+                                </exclusions>
+                            </dependency>
+                        </dependencies>
                         <executions>
                             <execution>
                                 <id>delete-jlink-artifact</id>
@@ -418,8 +429,32 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <zip destfile="${project.build.directory}/Walnut-${project.version}-${os.detected.classifier}.zip"
-                                             basedir="${project.build.directory}/maven-jpackage"/>
+                                        <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+                                                 classpathref="maven.plugin.classpath"/>
+                                        <if>
+                                            <!-- on unix-like systems, the main binary should be executable -->
+                                            <os family="unix"/>
+                                            <then>
+                                                <!-- variable is set by the kr.motd.maven:os-maven-plugin extension -->
+                                                <zip destfile="${project.build.directory}/Walnut-${project.version}-${os.detected.classifier}.zip">
+                                                    <zipfileset dir="${project.build.directory}/maven-jpackage"
+                                                                filemode="755"
+                                                                dirmode="755">
+                                                        <include name="Walnut/bin/Walnut"/>
+                                                    </zipfileset>
+                                                    <zipfileset dir="${project.build.directory}/maven-jpackage"
+                                                                filemode="644"
+                                                                dirmode="755">
+                                                        <exclude name="Walnut/bin/Walnut"/>
+                                                    </zipfileset>
+                                                </zip>
+                                            </then>
+                                            <else>
+                                                <!-- variable is set by the kr.motd.maven:os-maven-plugin extension -->
+                                                <zip destfile="${project.build.directory}/Walnut-${project.version}-${os.detected.classifier}.zip"
+                                                     basedir="${project.build.directory}/maven-jpackage"/>
+                                            </else>
+                                        </if>
                                     </target>
                                 </configuration>
                             </execution>
