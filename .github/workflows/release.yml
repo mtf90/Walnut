@@ -5,7 +5,10 @@ on:
 jobs:
   publish:
     name: "Build and attach artifacts"
-    runs-on: [ ubuntu-latest, windows-latest, macos-15-intel, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-15-intel, macos-latest ]
     permissions:
       contents: write
     steps:
