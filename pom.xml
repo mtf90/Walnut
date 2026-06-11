@@ -387,7 +387,7 @@
                                         <!-- make sure we use the package's local dir as working directory -->
                                         <argument>--home-dir=$APPDIR</argument>
                                     </arguments>
-                                    <icon>${project.basedir}/src/main/resources/Walnut.png</icon>
+                                    <icon>${project.basedir}/src/main/resources/Walnut.icns</icon>
                                 </configuration>
                             </execution>
                         </executions>
