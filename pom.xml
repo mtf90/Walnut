@@ -314,6 +314,10 @@
                                             <targetPath>Custom Bases</targetPath>
                                         </resource>
                                         <resource>
+                                            <directory>Help Documentation</directory>
+                                            <targetPath>Help Documentation</targetPath>
+                                        </resource>
+                                        <resource>
                                             <directory>Macro Library</directory>
                                             <targetPath>Macro Library</targetPath>
                                         </resource>
