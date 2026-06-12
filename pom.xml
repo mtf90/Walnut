@@ -391,7 +391,7 @@
                                         <!-- make sure we use the package's local dir as working directory -->
                                         <argument>--home-dir=$APPDIR</argument>
                                     </arguments>
-                                    <icon>${project.basedir}/src/main/resources/Walnut.icns</icon>
+                                    <icon>.mvn/resources/Walnut.icns</icon>
                                     <winConsole>true</winConsole>
                                 </configuration>
                             </execution>
@@ -415,6 +415,7 @@
                         </dependencies>
                         <executions>
                             <execution>
+                                <!-- cleanup old jlink artifact to prevet confusion -->
                                 <id>delete-jlink-artifact</id>
                                 <phase>package</phase>
                                 <goals>
@@ -427,6 +428,36 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <!-- macOS .app distributables expect a GUI to launch -->
+                                <!-- therefore, add a small utility script that launches Terminal -->
+                                <id>add-macos-launchers</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+                                                 classpathref="maven.plugin.classpath"/>
+                                        <if>
+                                            <!-- only run on macOS -->
+                                            <os family="mac"/>
+                                            <then>
+                                                <copy file="${project.basedir}/.mvn/resources/WalnutLauncher"
+                                                      tofile="${project.build.directory}/maven-jpackage/Walnut.app/Contents/MacOS/WalnutLauncher"/>
+                                                <chmod file="${project.build.directory}/maven-jpackage/Walnut.app/Contents/MacOS/WalnutLauncher"
+                                                       perm="+x"/>
+                                                <replaceregexp file="${project.build.directory}/maven-jpackage/Walnut.app/Contents/Info.plist/"
+                                                               match="&lt;key&gt;CFBundleExecutable&lt;/key&gt;\s*&lt;string&gt;Walnut&lt;/string&gt;"
+                                                               replace="&lt;key&gt;CFBundleExecutable&lt;/key&gt;&lt;string&gt;WalnutLauncher&lt;/string&gt;"
+                                                />
+                                            </then>
+                                        </if>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <!-- build the final artifact and keep relevant file permissions -->
                                 <id>zip-jpackage-artifact</id>
                                 <phase>package</phase>
                                 <goals>
