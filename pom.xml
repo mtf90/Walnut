@@ -391,7 +391,7 @@
                                         <!-- make sure we use the package's local dir as working directory -->
                                         <argument>--home-dir=$APPDIR</argument>
                                     </arguments>
-                                    <icon>.mvn/resources/Walnut.icns</icon>
+                                    <icon>${project.basedir}/.mvn/resources/Walnut.icns</icon>
                                     <winConsole>true</winConsole>
                                 </configuration>
                             </execution>
