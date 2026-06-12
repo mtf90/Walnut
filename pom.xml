@@ -475,13 +475,13 @@
                                                 <zip destfile="${project.build.directory}/Walnut-${project.version}-${os.detected.classifier}.zip">
                                                     <zipfileset dir="${project.build.directory}/maven-jpackage"
                                                                 filemode="755"
-                                                                dirmode="755">
-                                                        <include name="Walnut/bin/Walnut"/>
+                                                                dirmode="755"
+                                                                includes="Walnut/bin/Walnut, Walnut.app/Content/MacOS/Walnut, Walnut.app/Content/MacOS/WalnutLauncher">
                                                     </zipfileset>
                                                     <zipfileset dir="${project.build.directory}/maven-jpackage"
                                                                 filemode="644"
-                                                                dirmode="755">
-                                                        <exclude name="Walnut/bin/Walnut"/>
+                                                                dirmode="755"
+                                                                excludes="Walnut/bin/Walnut, Walnut.app/Content/MacOS/Walnut, Walnut.app/Content/MacOS/WalnutLauncher">
                                                     </zipfileset>
                                                 </zip>
                                             </then>
