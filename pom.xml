@@ -476,12 +476,12 @@
                                                     <zipfileset dir="${project.build.directory}/maven-jpackage"
                                                                 filemode="755"
                                                                 dirmode="755"
-                                                                includes="Walnut/bin/Walnut, Walnut.app/Content/MacOS/Walnut, Walnut.app/Content/MacOS/WalnutLauncher">
+                                                                includes="Walnut/bin/Walnut, Walnut.app/Contents/MacOS/Walnut, Walnut.app/Contents/MacOS/WalnutLauncher">
                                                     </zipfileset>
                                                     <zipfileset dir="${project.build.directory}/maven-jpackage"
                                                                 filemode="644"
                                                                 dirmode="755"
-                                                                excludes="Walnut/bin/Walnut, Walnut.app/Content/MacOS/Walnut, Walnut.app/Content/MacOS/WalnutLauncher">
+                                                                excludes="Walnut/bin/Walnut, Walnut.app/Contents/MacOS/Walnut, Walnut.app/Contents/MacOS/WalnutLauncher">
                                                     </zipfileset>
                                                 </zip>
                                             </then>
