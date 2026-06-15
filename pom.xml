@@ -29,6 +29,15 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
+
+        <moditect.path>${project.build.directory}/moditect-modules</moditect.path>
+        <jpackage.path>${project.build.directory}/maven-jpackage</jpackage.path>
+        <jpackage-res.path>${project.build.directory}/jpackage-resources</jpackage-res.path>
+        <!-- variable is set by the kr.motd.maven:os-maven-plugin extension -->
+        <dist.path>${project.build.directory}/Walnut-${project.version}-${os.detected.classifier}.zip</dist.path>
+        <dist-res.path>${project.basedir}/src/main/jpackage</dist-res.path>
+        <!-- overridden in build profiles -->
+        <icon.path>${dist-res.path}/Walnut.icns</icon.path>
     </properties>
 
     <dependencyManagement>
@@ -219,6 +228,41 @@
                 </plugins>
             </build>
         </profile>
+        <!-- the following profiles set platform specific properties used in the build process -->
+        <profile>
+            <id>linux-platform</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <properties>
+                <icon.path>${dist-res.path}/Walnut.png</icon.path>
+            </properties>
+        </profile>
+        <profile>
+            <id>mac-platform</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <icon.path>${dist-res.path}/Walnut.icns</icon.path>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows-platform</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <icon.path>${dist-res.path}/Walnut.ico</icon.path>
+            </properties>
+        </profile>
+        <!-- profile for building distributions -->
         <profile>
             <!-- build fat jar, including all its dependencies -->
             <id>fat-jar</id>
@@ -266,9 +310,9 @@
                                     <goal>add-module-info</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${project.build.directory}/moditect-modules</outputDirectory>
+                                    <outputDirectory>${moditect.path}</outputDirectory>
                                     <modules>
-                                        <!-- Repeat this block for each non-modular dependency -->
+                                        <!-- repeat this block for each non-modular dependency -->
                                         <module>
                                             <artifact>
                                                 <groupId>dk.brics</groupId>
@@ -308,7 +352,7 @@
                                     <noManPages>true</noManPages>
                                     <stripDebug>true</stripDebug>
                                     <modulePaths>
-                                        <modulePath>${project.build.directory}/moditect-modules</modulePath>
+                                        <modulePath>${moditect.path}</modulePath>
                                     </modulePaths>
                                 </configuration>
                             </execution>
@@ -324,7 +368,7 @@
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${project.build.directory}/jpackage-resources</outputDirectory>
+                                    <outputDirectory>${jpackage-res.path}</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>${project.basedir}</directory>
@@ -383,15 +427,14 @@
                                 <configuration>
                                     <name>Walnut</name>
                                     <type>APP_IMAGE</type>
-                                    <input>${project.build.directory}/jpackage-resources</input>
+                                    <input>${jpackage-res.path}</input>
                                     <module>io.github.walnut_theorem_prover.walnut/Main.Prover</module>
                                     <runtimeImage>${project.build.directory}/maven-jlink/default</runtimeImage>
-                                    <destination>${project.build.directory}/maven-jpackage</destination>
+                                    <destination>${jpackage.path}</destination>
                                     <arguments>
-                                        <!-- make sure we use the package's local dir as working directory -->
                                         <argument>--home-dir=$APPDIR</argument>
                                     </arguments>
-                                    <icon>${project.basedir}/.mvn/resources/Walnut.icns</icon>
+                                    <icon>${icon.path}</icon>
                                     <winConsole>true</winConsole>
                                 </configuration>
                             </execution>
@@ -443,11 +486,11 @@
                                             <!-- only run on macOS -->
                                             <os family="mac"/>
                                             <then>
-                                                <copy file="${project.basedir}/.mvn/resources/WalnutLauncher"
-                                                      tofile="${project.build.directory}/maven-jpackage/Walnut.app/Contents/MacOS/WalnutLauncher"/>
-                                                <chmod file="${project.build.directory}/maven-jpackage/Walnut.app/Contents/MacOS/WalnutLauncher"
+                                                <copy file="${dist-res.path}/WalnutLauncher"
+                                                      tofile="${jpackage.path}/Walnut.app/Contents/MacOS/WalnutLauncher"/>
+                                                <chmod file="${jpackage.path}/Walnut.app/Contents/MacOS/WalnutLauncher"
                                                        perm="+x"/>
-                                                <replaceregexp file="${project.build.directory}/maven-jpackage/Walnut.app/Contents/Info.plist/"
+                                                <replaceregexp file="${jpackage.path}/Walnut.app/Contents/Info.plist/"
                                                                match="&lt;key&gt;CFBundleExecutable&lt;/key&gt;\s*&lt;string&gt;Walnut&lt;/string&gt;"
                                                                replace="&lt;key&gt;CFBundleExecutable&lt;/key&gt;&lt;string&gt;WalnutLauncher&lt;/string&gt;"
                                                 />
@@ -468,17 +511,16 @@
                                         <taskdef resource="net/sf/antcontrib/antcontrib.properties"
                                                  classpathref="maven.plugin.classpath"/>
                                         <if>
-                                            <!-- on unix-like systems, the main binary should be executable -->
+                                            <!-- on unix-like systems, the main binaries should be executable -->
                                             <os family="unix"/>
                                             <then>
-                                                <!-- variable is set by the kr.motd.maven:os-maven-plugin extension -->
-                                                <zip destfile="${project.build.directory}/Walnut-${project.version}-${os.detected.classifier}.zip">
-                                                    <zipfileset dir="${project.build.directory}/maven-jpackage"
+                                                <zip destfile="${dist.path}">
+                                                    <zipfileset dir="${jpackage.path}"
                                                                 filemode="755"
                                                                 dirmode="755"
                                                                 includes="Walnut/bin/Walnut, Walnut.app/Contents/MacOS/Walnut, Walnut.app/Contents/MacOS/WalnutLauncher">
                                                     </zipfileset>
-                                                    <zipfileset dir="${project.build.directory}/maven-jpackage"
+                                                    <zipfileset dir="${jpackage.path}"
                                                                 filemode="644"
                                                                 dirmode="755"
                                                                 excludes="Walnut/bin/Walnut, Walnut.app/Contents/MacOS/Walnut, Walnut.app/Contents/MacOS/WalnutLauncher">
@@ -486,9 +528,8 @@
                                                 </zip>
                                             </then>
                                             <else>
-                                                <!-- variable is set by the kr.motd.maven:os-maven-plugin extension -->
-                                                <zip destfile="${project.build.directory}/Walnut-${project.version}-${os.detected.classifier}.zip"
-                                                     basedir="${project.build.directory}/maven-jpackage"/>
+                                                <zip destfile="${dist.path}"
+                                                     basedir="${jpackage.path}"/>
                                             </else>
                                         </if>
                                     </target>
