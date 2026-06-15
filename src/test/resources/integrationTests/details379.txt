@@ -1,3 +1,17 @@
+Applying valid representation #0
+Applying valid representation #1
+Applying valid representation #2
+Applying valid representation #0
+Applying valid representation #1
+Applying valid representation #0
+Applying valid representation #1
+Applying valid representation #0
+Applying valid representation #1
+Applying valid representation #2
+Applying valid representation #0
+Applying valid representation #1
+Applying valid representation #0
+Applying valid representation #1
 computing n+1
 computed n+1
 computing fibmr(...)
@@ -48,6 +62,20 @@ computing ~fibmr(i,(n-1),n))
   totalized:16 states - 0ms
   Minimizing: 16 states.
   Minimized:16 states - 0ms.
+  Applying valid representation #0
+   computing &:16 states - 2 states
+    computing cross product:16 states - 2 states
+    computed cross product:18 states - 
+    Minimizing: 18 states.
+    Minimized:18 states - .
+   computed &:18 states - 
+  Applying valid representation #1
+   computing &:18 states - 2 states
+    computing cross product:18 states - 2 states
+    computed cross product:21 states - 
+    Minimizing: 21 states.
+    Minimized:21 states - .
+   computed &:21 states - 
  computed ~:21 states - 1ms
 computed ~fibmr(i,(n-1),n))
 ~fibmr(i,(n-1),n)):21 states - 1ms

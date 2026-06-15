@@ -249,6 +249,7 @@ public class Automaton {
         this.fa.setAlphabetSize(richAlphabet.determineAlphabetSize());
     }
 
+    // Apply valid representation restrictions
     public void applyAllRepresentations() {
         boolean flag = determineRandomLabel();
         Automaton K = this;
@@ -257,9 +258,10 @@ public class Automaton {
             if (ns != null && ns.useAllRepresentations()) {
                 Automaton N = ns.getAllRepresentations();
                 N.bind(List.of(getLabel().get(i)));
-                Logging.disablePrint();
+                Logging.logAndPrint("Applying valid representation #" + i);
+                Logging.indent();
                 K = AutomatonLogicalOps.and(K, N);
-                Logging.enablePrint();
+                Logging.dedent();
             }
         }
         if (flag)

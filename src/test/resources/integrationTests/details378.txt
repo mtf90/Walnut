@@ -1,4 +1,6 @@
 computing j>=1
+  Applying valid representation #0
+  Applying valid representation #1
 computed j>=1
 j>=1:3 states - 1ms
  computing 2*j
@@ -25,6 +27,8 @@ j>=1:3 states - 1ms
   fixed leading zeros:40 states - 2ms
  computed i+(2*j)
  computing (i+(2*j))<=n
+   Applying valid representation #0
+   Applying valid representation #1
    computing &:6 states - 40 states
     computing cross product:6 states - 40 states
       Progress: Added 100 states - 14 states left in queue - 114 reachable states - 0ms
@@ -150,6 +154,27 @@ j>=1:3 states - 1ms
        computed cross product:156 states - 1ms
        Minimizing: 156 states.
        Minimized:92 states - 0ms.
+      Applying valid representation #0
+       computing &:92 states - 2 states
+        computing cross product:92 states - 2 states
+        computed cross product:93 states - 
+        Minimizing: 93 states.
+        Minimized:93 states - .
+       computed &:93 states - 
+      Applying valid representation #1
+       computing &:93 states - 2 states
+        computing cross product:93 states - 2 states
+        computed cross product:95 states - 
+        Minimizing: 95 states.
+        Minimized:91 states - .
+       computed &:91 states - 
+      Applying valid representation #2
+       computing &:91 states - 2 states
+        computing cross product:91 states - 2 states
+        computed cross product:93 states - 
+        Minimizing: 93 states.
+        Minimized:93 states - .
+       computed &:93 states - 
       computed =>:93 states - 3ms
      computed k<j=>F[(i+k)]=F[((i+j)+k)]
      (k<j=>F[(i+k)]=F[((i+j)+k)]):93 states - 3ms
@@ -159,6 +184,27 @@ j>=1:3 states - 1ms
         totalized:94 states - 1ms
         Minimizing: 94 states.
         Minimized:94 states - 0ms.
+        Applying valid representation #0
+         computing &:94 states - 2 states
+          computing cross product:94 states - 2 states
+          computed cross product:95 states - 
+          Minimizing: 95 states.
+          Minimized:95 states - .
+         computed &:95 states - 
+        Applying valid representation #1
+         computing &:95 states - 2 states
+          computing cross product:95 states - 2 states
+          computed cross product:97 states - 
+          Minimizing: 97 states.
+          Minimized:97 states - .
+         computed &:97 states - 
+        Applying valid representation #2
+         computing &:97 states - 2 states
+          computing cross product:97 states - 2 states
+          computed cross product:93 states - 
+          Minimizing: 93 states.
+          Minimized:85 states - .
+         computed &:85 states - 
        computed ~:85 states - 3ms
        quantifying:85 states
          Determinizing [#10, strategy: SC]: 85 states
@@ -178,6 +224,20 @@ j>=1:3 states - 1ms
         totalized:13 states - 0ms
         Minimizing: 13 states.
         Minimized:13 states - 0ms.
+        Applying valid representation #0
+         computing &:13 states - 2 states
+          computing cross product:13 states - 2 states
+          computed cross product:14 states - 
+          Minimizing: 14 states.
+          Minimized:14 states - .
+         computed &:14 states - 
+        Applying valid representation #1
+         computing &:14 states - 2 states
+          computing cross product:14 states - 2 states
+          computed cross product:12 states - 
+          Minimizing: 12 states.
+          Minimized:6 states - .
+         computed &:6 states - 
        computed ~:6 states - 0ms
       computed quantifier (A k (k<j=>F[(i+k)]=F[((i+j)+k)]))
       (A k (k<j=>F[(i+k)]=F[((i+j)+k)])):6 states - 6ms

@@ -966,12 +966,12 @@ public class IntegrationTest {
 	}
 
 	private static void assertEqualMessages(String expected, String actual) throws IOException {
-		String expectedDetails = expected.trim();
+		String expectedDetails = expected.strip();
 		expectedDetails = expectedDetails.replaceAll(" {2}"," ");
 		//		expectedDetails = expectedDetails.replaceAll(" ",""); if whitespace is confusing you
 		expectedDetails = expectedDetails.replaceAll("\\d+ms", "");
 		expectedDetails = expectedDetails.replaceAll("\\s*Progress:.*", "");
-		String actualDetails = actual.trim();
+		String actualDetails = actual.strip();
 		actualDetails = actualDetails.replaceAll(" {2}"," ");
 		//		actualDetails = actualDetails.replaceAll(" ",""); if whitespace is confusing you
 		actualDetails = actualDetails.replaceAll("\\d+ms", "");

@@ -140,7 +140,19 @@ public class NumberSystem {
     setAdditionAutomaton(name, base);
     setLessThanAutomaton(name, base);
     setEqualityAutomaton(getAlphabet());
-    setAllRepAutomaton(name, base);
+
+    //the set of all representations
+    allRepresentations = loadAutomatonOrNull(name, Prover.TXT_EXTENSION, base);
+    if (allRepresentations == null) {
+      flagUseAllRepresentations = false;
+    } else {
+      Collections.fill(allRepresentations.getNS(), this);
+      Logging.disablePrint();
+      addition.applyAllRepresentations();
+      lessThan.applyAllRepresentations();
+      equality.applyAllRepresentations();
+      Logging.enablePrint();
+    }
 
     constantsDynamicTable = new HashMap<>();
     multiplicationsDynamicTable = new HashMap<>();
@@ -386,17 +398,6 @@ public class NumberSystem {
         }
     }
 
-    private void setAllRepAutomaton(String name, String base) {
-        //the set of all representations
-        allRepresentations = loadAutomatonOrNull(name, Prover.TXT_EXTENSION, base);
-        if (allRepresentations == null) {
-            flagUseAllRepresentations = false;
-        } else {
-          Collections.fill(allRepresentations.getNS(), this);
-          applyAllRepresentations();
-        }
-    }
-
     /**
      * Initializes equality. equality has two inputs, and accepts iff the two inputs are equal.
      *
@@ -467,12 +468,6 @@ public class NumberSystem {
             }
         }
         baseChange.applyAllRepresentations();
-    }
-
-    private void applyAllRepresentations() {
-        addition.applyAllRepresentations();
-        lessThan.applyAllRepresentations();
-        equality.applyAllRepresentations();
     }
 
     /**
