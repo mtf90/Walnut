@@ -76,16 +76,16 @@ public class HelpMessages {
    */
   private static String[] parseHelpArguments(String fullCommandLine) {
     // Trim whitespace
-    String s = fullCommandLine.trim();
+    String s = fullCommandLine.strip();
 
     // Remove trailing semicolon if present
     if (s.endsWith(";")) {
-      s = s.substring(0, s.length() - 1).trim();
+      s = s.substring(0, s.length() - 1).strip();
     }
 
     // Remove the leading "help " (case-insensitive).
     // This uses a regex that matches "help" at the start, plus any trailing space.
-    s = s.replaceFirst("(?i)^help\\s*", "").trim();
+    s = s.replaceFirst("(?i)^help\\s*", "").strip();
 
     // If nothing left, return empty array
     if (s.isEmpty()) {

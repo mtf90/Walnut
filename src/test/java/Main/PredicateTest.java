@@ -148,9 +148,9 @@ public class PredicateTest {
 			Assertions.fail(e);
 		}
 		String s = postToString(p.postOrder);
-		Assertions.assertEquals(t.expected_predicate.trim().replace(" ","")
-				, p.predicate.trim().replace(" ",""));
-		Assertions.assertEquals(t.expected.trim().replace(" ",""),
-				s.trim().replace(" ",""));
+		Assertions.assertEquals(t.expected_predicate.strip().replace(" ","")
+				, p.predicate.strip().replace(" ",""));
+		Assertions.assertEquals(t.expected.strip().replace(" ",""),
+				s.strip().replace(" ",""));
 	}
 }

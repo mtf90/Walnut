@@ -137,6 +137,8 @@ public class NumberSystem {
     isNeg = name.contains(UNDERSCORE_NEG_UNDERSCORE); // fix: msd_neg_fib... but not msd_renege
     String base = determineBase(name);
 
+    Logging.disablePrint();
+
     setAdditionAutomaton(name, base);
     setLessThanAutomaton(name, base);
     setEqualityAutomaton(getAlphabet());
@@ -151,8 +153,9 @@ public class NumberSystem {
       addition.applyAllRepresentations();
       lessThan.applyAllRepresentations();
       equality.applyAllRepresentations();
-      Logging.enablePrint();
     }
+
+    Logging.enablePrint();
 
     constantsDynamicTable = new HashMap<>();
     multiplicationsDynamicTable = new HashMap<>();
@@ -309,9 +312,7 @@ public class NumberSystem {
             return new Automaton(mainName);
         } else if (fComplement.isFile()) {
             Automaton A = new Automaton(complementName);
-            Logging.disablePrint();
             AutomatonLogicalOps.reverse(A, false);
-            Logging.enablePrint();
             return A;
         }
         return null;
@@ -329,9 +330,7 @@ public class NumberSystem {
                 throw new WalnutException("Number system " + name + " is not defined.");
             }
             if (!isMsd) {
-                Logging.disablePrint();
                 AutomatonLogicalOps.reverse(addition, false);
-                Logging.enablePrint();
             }
         }
 
@@ -376,9 +375,7 @@ public class NumberSystem {
                 lessThan = lexicographicLessThan(getAlphabet());
             }
             if (!isMsd) {
-                Logging.disablePrint();
                 AutomatonLogicalOps.reverse(lessThan, false);
-                Logging.enablePrint();
             }
         }
 
@@ -936,6 +933,7 @@ public class NumberSystem {
         if (constantsDynamicTable.containsKey(n)) {
             return constantsDynamicTable.get(n);
         }
+        Logging.disablePrint();
 
         Automaton P;
         String a = "a", b = "b", c = "c";
@@ -945,20 +943,14 @@ public class NumberSystem {
             P = makeOne();
         } else if (n.signum() < 0) {
             // b = -n
-            Logging.disablePrint();
-
             Automaton M = getConstant(n.negate());
             M.bind(List.of(b));
             // Eb, a + b = 0 & b = -n
             P = arithmetic(a, b, BIG_ZERO, ArithmeticOperator.Ops.PLUS);
             P = AutomatonLogicalOps.and(P, M);
             AutomatonQuantification.quantify(P, b);
-
-            Logging.enablePrint();
         } else { // n > 0
             // a = floor(n/2)
-            Logging.disablePrint();
-
             BigInteger[] halfAndRemainder = n.divideAndRemainder(BIG_TWO);
             BigInteger floorHalf = halfAndRemainder[0];
             BigInteger ceilHalf = floorHalf.add(halfAndRemainder[1]);
@@ -971,8 +963,9 @@ public class NumberSystem {
             P = AutomatonLogicalOps.and(P, M);
             P = AutomatonLogicalOps.and(P, N);
             AutomatonQuantification.quantify(P, Set.of(a, b));
-            Logging.enablePrint();
         }
+
+        Logging.enablePrint();
         constantsDynamicTable.put(n, P);
         return P;
     }

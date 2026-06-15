@@ -934,14 +934,14 @@ public class IntegrationTest {
 			List<String> actualMatrixOutput = actual.getMatrixOutput();
 			Assertions.assertEquals(expectedMatrixOutput.size(), actualMatrixOutput.size());
 			for(int j=0;j<expectedMatrixOutput.size();j++) {
-				assertEqualMessages(expectedMatrixOutput.get(j).trim(), actualMatrixOutput.get(j).trim());
+				assertEqualMessages(expectedMatrixOutput.get(j).strip(), actualMatrixOutput.get(j).strip());
 			}
 
-			String expectedGraphViz = expected.getGraphViz().trim();
+			String expectedGraphViz = expected.getGraphViz().strip();
 			if (!expectedGraphViz.isEmpty()) {
 				// Rather than creating 100s of graphviz files for testing and dealing with DFAOs etc.,
 				// we only test if added one to our resources
-				assertEqualMessages(expectedGraphViz, actual.getGraphViz().trim());
+				assertEqualMessages(expectedGraphViz, actual.getGraphViz().strip());
 			}
 			assertEqualMessages(expected.getDetails(), actual.getDetails());
 			Assertions.assertEquals(expected.getAutomatonPairs().size(), actual.getAutomatonPairs().size(),
