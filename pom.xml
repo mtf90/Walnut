@@ -36,8 +36,6 @@
         <!-- variable is set by the kr.motd.maven:os-maven-plugin extension -->
         <dist.path>${project.build.directory}/Walnut-${project.version}-${os.detected.classifier}.zip</dist.path>
         <dist-res.path>${project.basedir}/src/main/jpackage</dist-res.path>
-        <!-- overridden in build profiles -->
-        <icon.path>${dist-res.path}/Walnut.icns</icon.path>
     </properties>
 
     <dependencyManagement>
@@ -165,7 +163,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-antrun-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
                 </plugin>
 
                 <plugin>
@@ -493,6 +491,7 @@
                                                 <replaceregexp file="${jpackage.path}/Walnut.app/Contents/Info.plist/"
                                                                match="&lt;key&gt;CFBundleExecutable&lt;/key&gt;\s*&lt;string&gt;Walnut&lt;/string&gt;"
                                                                replace="&lt;key&gt;CFBundleExecutable&lt;/key&gt;&lt;string&gt;WalnutLauncher&lt;/string&gt;"
+                                                               failOnError="true"
                                                 />
                                             </then>
                                         </if>
