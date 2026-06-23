@@ -4,7 +4,7 @@
 
     <groupId>io.github.walnut-theorem-prover</groupId>
     <artifactId>walnut</artifactId>
-    <version>8.0.0-SNAPSHOT</version>
+    <version>8.0-SNAPSHOT</version>
 
     <name>Walnut Theorem Prover</name>
     <url>https://walnut-theorem-prover.github.io/</url>
